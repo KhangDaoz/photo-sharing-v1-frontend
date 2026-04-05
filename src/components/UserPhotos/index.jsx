@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   List,
   Divider,
@@ -13,16 +13,33 @@ import {
 
 import "./styles.css";
 import { useParams, Link } from "react-router-dom";
-import models from "../../modelData/models";
+import fetchModel from "../../lib/fetchModelData";
 
 /**
  * Define UserPhotos, a React component of Project 4.
  */
 function UserPhotos() {
   const { userId } = useParams();
-  const user = models.userModel(userId);
-  const photos = models.photoOfUserModel(userId);
-  // console.log(photo);
+  const [user, setUser] = useState(null);
+  const [photos, setPhotos] = useState([]);
+
+  useEffect(() => {
+    const loadPhotosPage = async () => {
+      try {
+        const userData = await fetchModel(`/user/${userId}`);
+        const photosData = await fetchModel(`/photosOfUser/${userId}`);
+        setUser(userData);
+        setPhotos(photosData);
+      } catch (error) {
+        console.error("Failed to fetch photos page data:", error);
+        setUser(null);
+        setPhotos([]);
+      }
+    };
+
+    loadPhotosPage();
+  }, [userId]);
+
   let linkToAuthor; // Link component to Author
   if (user) {
     linkToAuthor = (

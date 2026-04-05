@@ -1,17 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Box, Grid, Typography } from "@mui/material";
 
 import "./styles.css";
 import { useParams, Link } from "react-router-dom";
-import models from "../../modelData/models";
+import fetchModel from "../../lib/fetchModelData";
 
 /**
  * Define UserDetail, a React component of Project 4.
  */
 function UserDetail() {
   const { userId } = useParams();
-  const user = models.userModel(userId);
-  // console.log(user);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const data = await fetchModel(`/user/${userId}`);
+        setUser(data);
+      } catch (error) {
+        console.error("Failed to fetch user detail:", error);
+        setUser(null);
+      }
+    };
+
+    loadUser();
+  }, [userId]);
+
   return user ? (
     <Grid container>
       <Grid item xs={12}>

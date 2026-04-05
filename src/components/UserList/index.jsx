@@ -1,21 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Divider,
   List,
   ListItem,
   ListItemText,
-  Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
 import "./styles.css";
-import models from "../../modelData/models";
+import fetchModel from "../../lib/fetchModelData";
 
 /**
  * Define UserList, a React component of Project 4.
  */
 function UserList() {
-  const users = models.userListModel();
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const data = await fetchModel("/user/list");
+        setUsers(data);
+      } catch (error) {
+        console.error("Failed to fetch user list:", error);
+      }
+    };
+
+    loadUsers();
+  }, []);
+
   return (
     <div>
       {/* <Typography variant="body1">

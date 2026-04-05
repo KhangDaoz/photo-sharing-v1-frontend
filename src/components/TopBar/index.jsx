@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppBar, Toolbar, Typography } from "@mui/material";
 import { useMatch } from "react-router-dom";
 
 import "./styles.css";
 
-import models from "../../modelData/models";
+import fetchModel from "../../lib/fetchModelData";
 
 /**
  * Define TopBar, a React component of Project 4.
@@ -12,15 +12,36 @@ import models from "../../modelData/models";
 function TopBar() {
   const photoMatch = useMatch("/photos/:userId");
   const userMatch = useMatch("/users/:userId");
+  const [userName, setUserName] = useState("");
 
   const userId = photoMatch?.params?.userId || userMatch?.params?.userId;
-  const user = userId ? models.userModel(userId) : null;
+
+  useEffect(() => {
+    if (!userId) {
+      setUserName("");
+      return undefined;
+    }
+
+    const loadTopBarUser = async () => {
+      try {
+        const data = await fetchModel(`/user/${userId}`);
+        if (data) {
+          setUserName(`${data.first_name} ${data.last_name}`);
+        }
+      } catch (error) {
+        console.error("Failed to fetch topbar user:", error);
+        setUserName("");
+      }
+    };
+
+    loadTopBarUser();
+  }, [userId]);
 
   let contextTitle = "";
-  if (photoMatch && user) {
-    contextTitle = `Photos of ${user.first_name} ${user.last_name}`;
-  } else if (userMatch && user) {
-    contextTitle = `Info of ${user.first_name} ${user.last_name}`;
+  if (photoMatch && userName) {
+    contextTitle = `Photos of ${userName}`;
+  } else if (userMatch && userName) {
+    contextTitle = `Info of ${userName}`;
   }
 
   return (
