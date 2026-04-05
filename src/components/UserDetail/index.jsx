@@ -1,28 +1,53 @@
 import React, { useState } from "react";
-import { Typography } from "@mui/material";
+import { Button, Box, Grid, Typography } from "@mui/material";
 
 import "./styles.css";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import models from "../../modelData/models";
 
 /**
  * Define UserDetail, a React component of Project 4.
  */
 function UserDetail() {
-  const [users, setUsers] = useState(models.userListModel());
-  console.log(users);
-  const user = useParams();
-  console.log(models.userModel(user));
-  return (
-    <>
-      {/* <Typography variant="body1">
-            This should be the UserDetail view of the PhotoShare app. Since it is
-            invoked from React Router the params from the route will be in property match.
-            So this should show details of user: {user.userId}.
-            You can fetch the model for the user from models.userModel.
-          </Typography> */}
-      <h1></h1>
-    </>
+  const { userId } = useParams();
+  const user = models.userModel(userId);
+  // console.log(user);
+  return user ? (
+    <Grid container>
+      <Grid item xs={12}>
+        <Typography color="textSecondary">Name:</Typography>
+        <Typography variant="h6" gutterBottom>
+          {`${user.first_name} ${user.last_name}`}
+        </Typography>
+        <Typography color="textSecondary">Location:</Typography>
+        <Typography variant="h6" gutterBottom>
+          {`${user.location}`}
+        </Typography>
+        <Typography color="textSecondary">Description:</Typography>
+        <Typography variant="h6" gutterBottom>
+          {`${user.description}`}
+        </Typography>
+        <Typography color="textSecondary">Occupation:</Typography>
+        <Typography variant="h6" gutterBottom>
+          {`${user.occupation}`}
+        </Typography>
+      </Grid>
+      <Grid item xs={4} />
+      <Grid item xs={4}>
+        <Button
+          size="large"
+          to={user && `/photos/${user._id}`}
+          component={Link}
+          variant="contained"
+          color="primary"
+        >
+          See Photos
+        </Button>
+      </Grid>
+      <Grid item xs={4} />
+    </Grid>
+  ) : (
+    <Box sx={{ minWidth: 300 }}>Loading...</Box>
   );
 }
 
