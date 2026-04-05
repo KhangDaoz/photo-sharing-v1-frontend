@@ -46,7 +46,7 @@ function UserPhotos() {
             />
             <CardMedia
               component="img"
-              image={`./images/${photo.file_name}`}
+              image={`/images/${photo.file_name}`}
               alt="Anthor Post"
             />
             <CardContent>
